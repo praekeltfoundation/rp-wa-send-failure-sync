@@ -9,6 +9,8 @@ CHANNEL_ID = os.environ.get("CHANNEL_ID", "11")
 HUB_URL = os.environ.get("HUB_URL")
 HUB_TOKEN = os.environ.get("HUB_TOKEN")
 
+QUERY_LIMIT = os.environ.get("QUERY_LIMIT", "99999")
+
 DB_NAME = os.environ["DATABASE_NAME"]
 DB_USER = os.environ["LOGIN"]
 DB_PASSWORD = os.environ.get("PASSWORD")
@@ -30,8 +32,10 @@ def get_send_errors(error_date):
         AND channels_channellog.is_error = TRUE
         AND channels_channellog.response LIKE '%%"code":1013%%'
         GROUP BY contacts_contacturn.path
+        ORDER BY 2 desc
+        LIMIT %s
         """,
-        (error_date, CHANNEL_ID),
+        (error_date, CHANNEL_ID, QUERY_LIMIT),
     )
     return [(urn, error_timestamp) for urn, error_timestamp in cursor]
 
