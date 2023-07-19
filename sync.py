@@ -67,12 +67,14 @@ if __name__ == "__main__":
     )
     cursor = conn.cursor()
 
+    start_time = datetime.now()
     yesterday = datetime.now() - timedelta(1)
     send_errors = get_send_errors(datetime.strftime(yesterday, "%Y-%m-%d"))
 
     for contact_id, error_timestamp in send_errors:
-        print(f"Sending *{contact_id[-4:]} - {error_timestamp}", end=" ")
+        print(f"{datetime.now()} [-] Sending *{contact_id[-4:]} - {error_timestamp}", end=" ")
         status_code = send_error_to_hub(contact_id, error_timestamp)
-        print(f"Result: {status_code}")
+        print(f"- Result: {status_code}")
 
     print(f"Completed: {len(send_errors)}")
+    print(f"Duration: {str(datetime.now() - start_time)}")
